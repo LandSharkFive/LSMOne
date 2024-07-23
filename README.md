@@ -1,10 +1,10 @@
 # Log Structured Merge Tree (LSM) Demo
 
-This project demonstrates Log Structured Merge Tree (LSM) and Sorted String Tables (SST).  Creates and indexes data files.  Search for keys and values.  Merges two sorted files.  Merging is like Compaction, but duplicates are allowed.  The records are sorted by key and timestamp in a production system.
+This project demonstrates a Log Structured Merge Tree (LSM) and Sorted String Tables (SST).  Create and index data files.  Search for keys and values.  Merge two sorted files.  Merging is like Compaction, except duplicates are allowed.  In a production system, the records are sorted by key and timestamp.
 
 ## Description
 
-  A console-mode demonstration of LSM and SST.  
+A console-mode demonstration of LSM and SST.  
 
 ## Install and Build
 
