@@ -1,4 +1,4 @@
-# Log Sequence Merge Demo
+# Log Sequence Merge (LSM) Demo
 
 This project demonstrates Log Sequence Merge (LSM) and Sorted String Tables (SST).  The application creates data files.  Indexes the files.  Searches for keys and values in the files.  Merges two sorted files, similiar to Compaction, but duplicates are not removed.
 
@@ -9,6 +9,10 @@ This project demonstrates Log Sequence Merge (LSM) and Sorted String Tables (SST
 ## Install and Build
 
 The is a C# Console-Mode Project.  Open with  Visual Studio 2022 and above to compile. 
+
+## Sample File
+
+A sample file is attached which show the output of the program.
 
 ## References
 
