@@ -13,7 +13,7 @@ The is a C# Console-Mode Project.  Open with  Visual Studio 2022 and above to co
 
 ## Sample File
 
-A sample file is attached which show the output of the program.
+A sample file is attached which shows the output of the program.
 
 ## References
 
