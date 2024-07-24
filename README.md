@@ -16,7 +16,7 @@ A sample file shows the output of the program.
 
 ## Which databases use LSM?
 
-Casandra, DynamoDB, HBase, MongoDB, RocksDB, Schylla, etc.  Long list.
+Cassandra, DynamoDB, HBase, MongoDB, RocksDB, Schylla, etc.  Long list.
 
 ## References
 
