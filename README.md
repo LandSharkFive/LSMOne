@@ -14,6 +14,10 @@ The is a C# Console-Mode Project.  Open with  Visual Studio 2022 and above to co
 
 A sample file shows the output of the program.
 
+## Which databases use LSM?
+
+Casandra, DynamoDB, HBase, MongoDB, RocksDB, Schylla, etc.  Long list.
+
 ## References
 
    1. "SSTables and LSM Trees", Rahul Pradeep, June 2021, Medium.com, https://rahulpradeep.medium.com/sstables-and-lsm-trees-5ba6c5529325
