@@ -1,19 +1,19 @@
 Improvements
 
-1.  (Easy)  Add code for Distinct() to the merge.  Distinct remove duplicates by checking equality between
+1.  (Easy)  Add code for Distinct() to the merge.  Distinct() removes duplicates by checking for equality between
     the current item and the last item.
 
-2.  (Easy) Add schema to the data tables.  A schema consists of a JSON file that contains columns.  Each column has
+2.  (Easy) Add schema to the data tables.  A schema is a JSON file that contains columns.  Each column has
     a column name and column type.
 
 3.  (Medium) Implement a skip list for the memtable.
 
 4.  (Easy) Add code to save the memtable (skip list) when it reaches a size limit.  The data is written
-    to a data file and the memtable is cleared.
+    to a data file.  The memtable is cleared.
 
-5.  (Hard) Create an object (class) which encapsulates both the memtable and the datafiles.  It allows searching for
-    values and saving values.  
+5.  (Hard) Create a class that encapsulates the memtable and the datafiles.  The class can search for
+    values and save values.  
 
-6.  (Hard) Add a Write Ahead Log (WAL), so that data cannot be lost during a power failure.
+6.  (Hard) Add a Write Ahead Log (WAL), so that data isn't lost during a power failure.
 
 
