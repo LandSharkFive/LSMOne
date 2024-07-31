@@ -170,6 +170,7 @@
             // read and print two data files
             List<TableTwo> a = SSUtil.ReadFileTwo("a.txt");
 
+            Console.WriteLine("File One");
             foreach (var x in a)
             {
                 Console.WriteLine("{0} {1}", x.Key, x.Value);
@@ -179,6 +180,7 @@
 
             List<TableTwo> b = SSUtil.ReadFileTwo("b.txt");
 
+            Console.WriteLine("File Two");
             foreach (var x in b)
             {
                 Console.WriteLine("{0} {1}", x.Key, x.Value);
@@ -188,7 +190,7 @@
 
             List<TableTwo> c = SSUtil.ReadFileTwo("out.txt");
 
-            // print merged file
+            Console.WriteLine("Merged File");
             foreach (var x in c)
             {
                 Console.WriteLine("{0} {1}", x.Key, x.Value);

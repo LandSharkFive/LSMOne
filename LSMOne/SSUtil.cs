@@ -369,6 +369,9 @@ namespace LSMOne
                         bw.Write(data);
                         bw.Write(index);
 
+                        // Group By Key.  Get First in Group.
+                        Dictionary<string, string> kv = new Dictionary<string, string>();
+
                         // compare
                         a = ReadTableTwo(br1);
                         b = ReadTableTwo(br2);
@@ -376,28 +379,45 @@ namespace LSMOne
                         {
                             if (string.Compare(a.Key, b.Key) <= 0)
                             {
-                                WriteTableTwo(bw, count, a);
-                                ++count;
+                                if (!kv.ContainsKey(a.Key))
+                                {
+                                    kv.Add(a.Key, a.Value);
+                                }
                                 a = ReadTableTwo(br1);
                             }
                             else
                             {
-                                WriteTableTwo(bw, count, b);
-                                ++count;
+                                if (!kv.ContainsKey(b.Key))
+                                {
+                                    kv.Add(b.Key, b.Value);
+                                }
                                 b = ReadTableTwo(br2);
                             }
                         }
+
                         while (a != null)
                         {
-                            WriteTableTwo(bw, count, a);
-                            ++count;
+                            if (!kv.ContainsKey(a.Key))
+                            {
+                                kv.Add(a.Key, a.Value);
+                            }
                             a = ReadTableTwo(br1);
                         }
+
                         while (b != null)
                         {
-                            WriteTableTwo(bw, count, b);
-                            ++count;
+                            if (!kv.ContainsKey(b.Key))
+                            {
+                                kv.Add(b.Key, b.Value);
+                            }
                             b = ReadTableTwo(br2);
+                        }
+
+                        count = 0;
+                        foreach (var p in kv)
+                        {
+                            WriteTableTwo(bw, count, new TableTwo(p.Key, p.Value));
+                            ++count;
                         }
                         bw.Write(-1);
 
