@@ -343,6 +343,7 @@ namespace LSMOne
 
         public static void MergeTableTwo(string inFile1, string inFile2, string outFile)
         {
+            int MaxSize = 100;
             TableTwo a = null;
             TableTwo b = null;
             using (BinaryReader br1 = new BinaryReader(File.Open(inFile1, FileMode.Open)))
@@ -377,11 +378,20 @@ namespace LSMOne
                         b = ReadTableTwo(br2);
                         while (a != null && b != null)
                         {
+                            if (kv.Count > MaxSize)
+                            {
+                                var last = kv.Last();
+                                kv.Clear();
+                                kv.Add(last.Key, last.Value);
+                            }
+
                             if (string.Compare(a.Key, b.Key) <= 0)
                             {
                                 if (!kv.ContainsKey(a.Key))
                                 {
                                     kv.Add(a.Key, a.Value);
+                                    WriteTableTwo(bw, count, a);
+                                    ++count;
                                 }
                                 a = ReadTableTwo(br1);
                             }
@@ -390,6 +400,8 @@ namespace LSMOne
                                 if (!kv.ContainsKey(b.Key))
                                 {
                                     kv.Add(b.Key, b.Value);
+                                    WriteTableTwo(bw, count, b);
+                                    ++count;
                                 }
                                 b = ReadTableTwo(br2);
                             }
@@ -397,29 +409,42 @@ namespace LSMOne
 
                         while (a != null)
                         {
+                            if (kv.Count > MaxSize)
+                            {
+                                var last = kv.Last();
+                                kv.Clear();
+                                kv.Add(last.Key, last.Value);
+                            }
+
                             if (!kv.ContainsKey(a.Key))
                             {
                                 kv.Add(a.Key, a.Value);
+                                WriteTableTwo(bw, count, a);
+                                ++count;
                             }
                             a = ReadTableTwo(br1);
                         }
 
                         while (b != null)
                         {
+                            if (kv.Count > MaxSize)
+                            {
+                                var last = kv.Last();
+                                kv.Clear();
+                                kv.Add(last.Key, last.Value);
+                            }
+
                             if (!kv.ContainsKey(b.Key))
                             {
                                 kv.Add(b.Key, b.Value);
+                                WriteTableTwo(bw, count, b);
+                                ++count;
                             }
                             b = ReadTableTwo(br2);
                         }
 
-                        count = 0;
-                        foreach (var p in kv)
-                        {
-                            WriteTableTwo(bw, count, new TableTwo(p.Key, p.Value));
-                            ++count;
-                        }
                         bw.Write(-1);
+                        kv.Clear();
 
                         index = (int)bw.BaseStream.Position;
                         bw.Seek(0, SeekOrigin.Begin);
