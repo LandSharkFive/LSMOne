@@ -12,6 +12,7 @@
             DemoFour();
             DemoFive();
             DemoSix();
+            DemoSeven();
         }
 
         static void DemoOne()
@@ -215,8 +216,18 @@
 
             Console.WriteLine();
         }
+
+        public static void DemoSeven() 
+        {
+            Console.WriteLine("Demo #7");
+            Console.WriteLine("Index Scan");
+            Console.WriteLine();
+
+            Console.WriteLine(SSUtil.SearchTableTwo("out.txt", "a32"));
+            Console.WriteLine();
+        }
+
+
     }
-
-
 }
 

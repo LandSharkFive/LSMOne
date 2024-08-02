@@ -261,6 +261,55 @@ namespace LSMOne
             return list;
         }
 
+        public static int ReadIndexTwo(string fileName, string myKey)
+        {
+            int value = 0;
+            int oldValue = 0;
+            using (BinaryReader br = new BinaryReader(File.OpenRead(fileName)))
+            {
+                int count = br.ReadInt32();
+                int data = br.ReadInt32();
+                int index = br.ReadInt32();
+
+                // index
+                br.BaseStream.Position = index;
+                int rowCount = br.ReadInt32();
+
+                while (true)
+                {
+                    int row = br.ReadInt32();
+                    if (row == -1)
+                    {
+                        break;
+                    }
+                    string key = br.ReadString();
+                    oldValue = value;
+                    value = br.ReadInt32();
+                    if (oldValue == 0)
+                    {
+                        oldValue = value;
+                    }
+                    int k = string.Compare(myKey, key);
+                    if (k == 0)
+                    {
+                        return value;
+                    }
+                    if (k == -1)
+                    {
+                        return oldValue;
+                    }
+                }
+            }
+
+            return value;
+        }
+
+        public static string SearchTableTwo(string filename, string key)
+        {
+            int pos = ReadIndexTwo(filename, key);
+            return GetFileTwo(filename, key, pos);
+        }
+
         public static string SearchTableTwo(string key, List<TableTwo> data)
         {
             var result = data.FirstOrDefault(x => x.Key.Contains(key));
@@ -337,8 +386,8 @@ namespace LSMOne
 
         public static string GetByIndexTwo(string fileName, List<IndexTwo> index, string key)
         {
-            int pos = SSUtil.FindIndexTwo(key, index);
-            return SSUtil.GetFileTwo(fileName, key, pos);
+            int pos = FindIndexTwo(key, index);
+            return GetFileTwo(fileName, key, pos);
         }
 
         public static void MergeTableTwo(string inFile1, string inFile2, string outFile)
@@ -486,10 +535,10 @@ namespace LSMOne
                 int data = br.ReadInt32();
                 index = br.ReadInt32();
 
-                int pos = 0;
                 int step = 10;
                 for (int i = 0; i < count; i++)
                 {
+                    int pos = (int)br.BaseStream.Position;
                     int row = br.ReadInt32();
                     string key = br.ReadString();
                     string value = br.ReadString();
@@ -498,7 +547,6 @@ namespace LSMOne
                     if (i % step == 0)
                     {
                         // sparse index
-                        pos = (int)br.BaseStream.Position;
                         list.Add(new IndexTwo(key, pos));
                     }
                 }
