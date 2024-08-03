@@ -120,14 +120,14 @@
         public static void DemoThree()
         {
             Console.WriteLine("Demo #3");
-            Console.WriteLine("Create second data file");
+            Console.WriteLine("Create two files");
             Console.WriteLine();
 
             var list = new List<TableTwo>();
             for (int i = 0; i < 100; i++)
             {
-                string key = "a" + i.ToString();
-                string value = "b" + rand.Next(100).ToString();
+                string key = "a" + i.ToString("00");
+                string value = "b" + rand.Next(100).ToString("00");
                 list.Add(new TableTwo(key, value));
             }
 
@@ -138,8 +138,8 @@
 
             for (int i = 0; i < 100; i++)
             {
-                string key = "a" + i.ToString();
-                string value = "b" + rand.Next(100).ToString();
+                string key = "a" + i.ToString("00");
+                string value = "b" + rand.Next(100).ToString("00");
                 list.Add(new TableTwo(key, value));
             }
 
@@ -156,7 +156,7 @@
             Console.WriteLine();
 
             // merge and index the file
-            SSUtil.MergeTableTwo("a.txt", "b.txt", "out.txt");
+            SSUtil.CompactTableTwo("a.txt", "b.txt", "out.txt");
             SSUtil.IndexTableTwo("out.txt");
 
             Console.WriteLine();

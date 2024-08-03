@@ -390,11 +390,16 @@ namespace LSMOne
             return GetFileTwo(fileName, key, pos);
         }
 
+        public static void CompactTableTwo(string inFile1, string inFile2, string outFile)
+        {
+            string tempFile = "1.tmp";
+            MergeTableTwo(inFile1, inFile2, tempFile);
+            GroupTableTwo(tempFile, outFile);
+            File.Delete(tempFile);
+        }
+
         public static void MergeTableTwo(string inFile1, string inFile2, string outFile)
         {
-            int MaxSize = 100;
-            TableTwo a = null;
-            TableTwo b = null;
             using (BinaryReader br1 = new BinaryReader(File.Open(inFile1, FileMode.Open)))
             {
                 using (BinaryReader br2 = new BinaryReader(File.Open(inFile2, FileMode.Open)))
@@ -419,81 +424,40 @@ namespace LSMOne
                         bw.Write(data);
                         bw.Write(index);
 
-                        // Group By Key.  Get First in Group.
-                        Dictionary<string, string> kv = new Dictionary<string, string>();
-
                         // compare
-                        a = ReadTableTwo(br1);
-                        b = ReadTableTwo(br2);
+                        TableTwo a = ReadTableTwo(br1);
+                        TableTwo b = ReadTableTwo(br2);
                         while (a != null && b != null)
                         {
-                            if (kv.Count > MaxSize)
-                            {
-                                var last = kv.Last();
-                                kv.Clear();
-                                kv.Add(last.Key, last.Value);
-                            }
-
                             if (string.Compare(a.Key, b.Key) <= 0)
                             {
-                                if (!kv.ContainsKey(a.Key))
-                                {
-                                    kv.Add(a.Key, a.Value);
-                                    WriteTableTwo(bw, count, a);
-                                    ++count;
-                                }
+                                WriteTableTwo(bw, count, a);
+                                ++count;
                                 a = ReadTableTwo(br1);
                             }
                             else
                             {
-                                if (!kv.ContainsKey(b.Key))
-                                {
-                                    kv.Add(b.Key, b.Value);
-                                    WriteTableTwo(bw, count, b);
-                                    ++count;
-                                }
+                                WriteTableTwo(bw, count, b);
+                                ++count;
                                 b = ReadTableTwo(br2);
                             }
                         }
 
                         while (a != null)
                         {
-                            if (kv.Count > MaxSize)
-                            {
-                                var last = kv.Last();
-                                kv.Clear();
-                                kv.Add(last.Key, last.Value);
-                            }
-
-                            if (!kv.ContainsKey(a.Key))
-                            {
-                                kv.Add(a.Key, a.Value);
-                                WriteTableTwo(bw, count, a);
-                                ++count;
-                            }
+                            WriteTableTwo(bw, count, a);
+                            ++count;
                             a = ReadTableTwo(br1);
                         }
 
                         while (b != null)
                         {
-                            if (kv.Count > MaxSize)
-                            {
-                                var last = kv.Last();
-                                kv.Clear();
-                                kv.Add(last.Key, last.Value);
-                            }
-
-                            if (!kv.ContainsKey(b.Key))
-                            {
-                                kv.Add(b.Key, b.Value);
-                                WriteTableTwo(bw, count, b);
-                                ++count;
-                            }
+                            WriteTableTwo(bw, count, b);
+                            ++count;
                             b = ReadTableTwo(br2);
                         }
 
                         bw.Write(-1);
-                        kv.Clear();
 
                         index = (int)bw.BaseStream.Position;
                         bw.Seek(0, SeekOrigin.Begin);
@@ -501,6 +465,50 @@ namespace LSMOne
                         bw.Write(12);
                         bw.Write(index);
                     }
+                }
+            }
+        }
+
+        public static void GroupTableTwo(string inFile, string outFile)
+        {
+            using (BinaryReader br = new BinaryReader(File.Open(inFile, FileMode.Open)))
+            {
+                using (BinaryWriter bw = new BinaryWriter(File.Open(outFile, FileMode.Create)))
+                {
+                    // header
+                    int k1 = br.ReadInt32();
+                    int data1 = br.ReadInt32();
+                    int index1 = br.ReadInt32();
+
+                    // header
+                    int count = 0;
+                    int data = 0;
+                    int index = 0;
+                    bw.Write(count);
+                    bw.Write(data);
+                    bw.Write(index);
+
+                    // compare
+                    string lastKey = string.Empty;
+                    TableTwo a = ReadTableTwo(br);
+                    while (a != null)
+                    {
+                        if (string.Compare(a.Key, lastKey) != 0)
+                        { 
+                            WriteTableTwo(bw, count, a);
+                            ++count;
+                        }
+                        lastKey = a.Key;
+                        a = ReadTableTwo(br);
+                    }
+
+                    bw.Write(-1);
+
+                    index = (int)bw.BaseStream.Position;
+                    bw.Seek(0, SeekOrigin.Begin);
+                    bw.Write(count);
+                    bw.Write(12);
+                    bw.Write(index);
                 }
             }
         }
