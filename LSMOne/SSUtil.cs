@@ -424,6 +424,9 @@ namespace LSMOne
                         bw.Write(data);
                         bw.Write(index);
 
+                        // dictionary 
+                        var dict = new Dictionary<string, string>();
+
                         // compare
                         TableTwo a = ReadTableTwo(br1);
                         TableTwo b = ReadTableTwo(br2);
@@ -431,31 +434,58 @@ namespace LSMOne
                         {
                             if (string.Compare(a.Key, b.Key) <= 0)
                             {
-                                WriteTableTwo(bw, count, a);
-                                ++count;
+                                if (!dict.ContainsKey(a.Key))
+                                {
+                                    dict.Add(a.Key, a.Value);
+                                }
                                 a = ReadTableTwo(br1);
                             }
                             else
                             {
-                                WriteTableTwo(bw, count, b);
-                                ++count;
+                                if (!dict.ContainsKey(b.Key))
+                                {
+                                    dict.Add(b.Key, b.Value);
+                                }
                                 b = ReadTableTwo(br2);
+                            }
+
+                            if (dict.Count > 100)
+                            {
+                                WriteDictionary(bw, dict);
+                                dict.Clear();
                             }
                         }
 
                         while (a != null)
                         {
-                            WriteTableTwo(bw, count, a);
-                            ++count;
+                            if (!dict.ContainsKey(a.Key))
+                            {
+                                dict.Add(a.Key, a.Value);
+                            }
+                            if (dict.Count > 100)
+                            {
+                                WriteDictionary(bw, dict);
+                                dict.Clear();
+                            }
                             a = ReadTableTwo(br1);
                         }
 
                         while (b != null)
                         {
-                            WriteTableTwo(bw, count, b);
-                            ++count;
+                            if (!dict.ContainsKey(b.Key))
+                            {
+                                dict.Add(b.Key, b.Value);
+                            }
+                            if (dict.Count > 100)
+                            {
+                                WriteDictionary(bw, dict);
+                                dict.Clear();   
+                            }
                             b = ReadTableTwo(br2);
                         }
+
+                        WriteDictionary(bw, dict);
+                        dict.Clear();
 
                         bw.Write(-1);
 
@@ -466,6 +496,16 @@ namespace LSMOne
                         bw.Write(index);
                     }
                 }
+            }
+        }
+
+        private static void WriteDictionary(BinaryWriter bw, Dictionary<string, string> d)
+        {
+            int k = 0;
+            foreach (var item in d)
+            {
+                WriteTableTwo(bw, k, new TableTwo(item.Key, item.Value));
+                ++k;
             }
         }
 
